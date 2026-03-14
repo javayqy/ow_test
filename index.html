@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OW Destiny Hero Test</title>
+  <link rel="icon" href="favicon.ico">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: #0b0c10;
+      color: #e2e8f0;
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Background gradient blobs */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 20%, rgba(59, 130, 246, 0.12), transparent),
+        radial-gradient(ellipse 60% 50% at 85% 80%, rgba(249, 115, 22, 0.12), transparent);
+    }
+
+    #ow-screen {
+      position: relative;
+      z-index: 1;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ----- Buttons ----- */
+    .ow-btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2.5rem;
+      background: #f97316;
+      color: #000;
+      font-weight: 900;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: none;
+      cursor: pointer;
+      transform: skewX(-10deg);
+      transition: all 0.15s;
+      box-shadow: 0 0 40px rgba(249, 115, 22, 0.45);
+      font-style: italic;
+    }
+
+    .ow-btn-primary:hover {
+      background: #ea6c10;
+      transform: skewX(-10deg) scale(1.06);
+      box-shadow: 0 0 55px rgba(249, 115, 22, 0.6);
+    }
+
+    .ow-btn-primary:active {
+      transform: skewX(-10deg) scale(0.97);
+    }
+
+    .ow-btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.9rem 2rem;
+      border: 2px solid #f97316;
+      color: #f97316;
+      background: transparent;
+      font-weight: 900;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transform: skewX(-10deg);
+      transition: all 0.15s;
+      font-style: italic;
+    }
+
+    .ow-btn-secondary:hover {
+      background: #f97316;
+      color: #000;
+    }
+
+    /* ----- Option buttons ----- */
+    .ow-option-btn {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1.15rem 1.4rem;
+      text-align: left;
+      border-radius: 0.85rem;
+      color: #e2e8f0;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
+
+    .ow-option-btn:hover {
+      background: #f97316;
+      color: #000;
+      border-color: #f97316;
+    }
+
+    .ow-option-btn.ow-stage2:hover {
+      background: #3b82f6;
+      border-color: #3b82f6;
+      color: #fff;
+    }
+
+    /* ----- Progress ----- */
+    .ow-progress-bar {
+      height: 5px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .ow-progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+
+    /* ----- Trait tags ----- */
+    .ow-tag {
+      display: inline-block;
+      padding: 0.3rem 0.75rem;
+      background: rgba(30, 33, 45, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.5rem;
+      color: #e2e8f0;
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0.2rem;
+    }
+
+    /* ----- Spinner ----- */
+    .ow-spinner {
+      width: 5rem;
+      height: 5rem;
+      border: 4px solid #f97316;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: ow-spin 1s linear infinite;
+    }
+
+    /* ----- Retry button ----- */
+    .ow-retry-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.75rem;
+      color: #e2e8f0;
+      font-weight: 900;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transform: skewX(-6deg);
+      transition: all 0.15s;
+    }
+
+    .ow-retry-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* ----- Result card ----- */
+    .ow-result-card {
+      background: linear-gradient(135deg, rgba(15, 17, 25, 0.97), rgba(22, 25, 36, 0.97));
+      border: 1px solid rgba(249, 115, 22, 0.2);
+      border-radius: 2rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ow-result-header {
+      height: 4px;
+      background: linear-gradient(90deg, #c2410c, #f97316, #c2410c);
+    }
+
+    .ow-avatar-ring {
+      width: 10rem;
+      height: 10rem;
+      border-radius: 50%;
+      background: rgba(249, 115, 22, 0.1);
+      border: 2px solid rgba(249, 115, 22, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .ow-avatar-inner {
+      width: 8rem;
+      height: 8rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #c2410c, #f97316);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 50px rgba(249, 115, 22, 0.5);
+    }
+
+    .ow-match-badge {
+      position: absolute;
+      bottom: -1rem;
+      right: -1rem;
+      background: #0b0c10;
+      border: 2px solid #f97316;
+      color: #f97316;
+      padding: 0.35rem 0.75rem;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 0.85rem;
+      border-radius: 0.5rem;
+      text-transform: uppercase;
+    }
+
+    .ow-hero-name {
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      font-weight: 900;
+      font-style: italic;
+      text-transform: uppercase;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: #fff;
+      text-shadow: 0 2px 20px rgba(249, 115, 22, 0.35);
+    }
+
+    /* ----- Lang bar ----- */
+    #ow-lang-bar {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      background: rgba(10, 12, 18, 0.85);
+      padding: 0.5rem 1rem;
+      border-radius: 99px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+    }
+
+    /* ----- Animations ----- */
+    @keyframes ow-spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes ow-fade-in {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes ow-slide-in {
+      from {
+        opacity: 0;
+        transform: translateX(40px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .ow-anim-fade {
+      animation: ow-fade-in 0.5s ease forwards;
+    }
+
+    .ow-anim-slide {
+      animation: ow-slide-in 0.4s ease forwards;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="ow-screen-wrapper" style="display: flex; flex-direction: column; min-height: 100vh;">
+    <!-- Main content area -->
+    <div style="flex-grow: 1;">
+      <div id="ow-screen"></div>
+    </div>
+  </div>
+
+  <!-- html2canvas for image generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <script src="static/js/ow_test.js?v=1.1"></script>
+</body>
+
+</html>
